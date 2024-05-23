@@ -1,12 +1,13 @@
 import React from 'react';
-import './App.css';
+import QuizList from './components/quiz_list';
+import './index.css';
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
-      <h1>"new Quiz"</h1>
+      <QuizList />
     </div>
   );
-}
+};
 
 export default App;
