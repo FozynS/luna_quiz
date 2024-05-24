@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/luna_quiz/static/css/main.b32ec452.css",
+    "main.js": "/luna_quiz/static/js/main.fa5fee7e.js",
+    "index.html": "/luna_quiz/index.html",
+    "main.b32ec452.css.map": "/luna_quiz/static/css/main.b32ec452.css.map",
+    "main.fa5fee7e.js.map": "/luna_quiz/static/js/main.fa5fee7e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b32ec452.css",
+    "static/js/main.fa5fee7e.js"
+  ]
+}
