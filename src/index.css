@@ -2,13 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.App {
-  background: rgb(237,224,250);
-  background: linear-gradient(146deg, rgba(237,224,250,1) 0%, rgba(203,232,255,1) 29%, rgba(233,225,251,1) 58%, rgba(203,232,255,1) 91%);
-  height: 100vh; 
-}
-.container {
-  padding: 20px;
+@layer utilities {
+  .bg-custom-gradient {
+    background: rgb(237,224,250);
+    background: linear-gradient(146deg, rgba(237,224,250,1) 0%, rgba(203,232,255,1) 29%, rgba(233,225,251,1) 58%, rgba(203,232,255,1) 91%);
+  }
 }
 
 h1 {
@@ -46,24 +44,4 @@ input[type="number"] {
 
 input[type="radio"] {
   @apply mr-2;
-}
-
-.quiz-item {
-  @apply bg-white p-6 rounded mb-8;
-}
-
-.quiz-item h2 {
-  @apply text-lg font-semibold mb-4;
-}
-
-.quiz-question {
-  @apply mb-4;
-}
-
-.quiz-answers {
-  @apply ml-4;
-}
-
-.quiz-answer {
-  @apply mb-2;
 }

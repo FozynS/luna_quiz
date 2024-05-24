@@ -1,61 +1,81 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
+import EditQuizForm from "./edit_quiz_form";
+import TakeQuizModal from "./take_quiz_modal";
 
-const testQuiz = [
-  {
-    id: 1,
-    questions: [{text: 'Question 1', answers:['Asn1', 'Ans2', 'Ans3', 'Ans4'], correctAnswer: 0, points: 1}],
-    title: 'Quiz 1',
-  },
-  {
-    id: 2,
-    questions: [{text: 'Question 2', answers:['Asn1', 'Ans2', 'Ans3', 'Ans4'], correctAnswer: 1, points: 2}],
-    title: 'Quiz 2',
-  },
-  {
-    id: 3,
-    questions: [{text: 'Question 3', answers:['Asn1', 'Ans2', 'Ans3', 'Ans4'], correctAnswer: 2, points: 3}],
-    title: 'Quiz 3',
-  },
-  {
-    id: 4,
-    questions: [{text: 'Question 4', answers:['Asn1', 'Ans2', 'Ans3', 'Ans4'], correctAnswer: 3, points: 4}],
-    title: 'Quiz 4',
-  },
-  {
-    id: 5,
-    questions: [{text: 'Question 5', answers:['Asn1', 'Ans2', 'Ans3', 'Ans4'], correctAnswer: 0, points: 5}],
-    title: 'Quiz 5',
-  },
-]
+import generateRandomId from "../utils/generate_random_id";
+
 const QuizList: React.FC = () => {
-  const [quizes, setQuizes] = useState<any[]>(testQuiz);
+  const [quizes, setQuizes] = useState<any[]>([]);
   const [takingQuiz, setTakingQuiz] = useState<any | null>(null);
+  const [editingQuiz, setEditingQuiz] = useState<any | null>(null);
+  const [quizResults, setQuizResults] = useState<any[]>([]);
 
-  const handleEditQuiz = (quiz: any) => {
-    console.log(quiz);
-  }
+  useEffect(() => {
+    const storedQuizes = JSON.parse(localStorage.getItem('quizes') || '[]');
+    setQuizes(storedQuizes);
+  }, []); 
+
+  const saveQuizes = (newQuizes: any[]) => {
+    setQuizes(newQuizes);
+    localStorage.setItem('quizes', JSON.stringify(newQuizes));
+  };
+
+  const handleSaveQuiz = (quizToSave: any) => {
+    const newQuizzes = editingQuiz.id
+      ? quizes.map(quiz => (quiz.id === quizToSave.id ? quizToSave : quiz))
+      : [...quizes, { ...quizToSave, id: generateRandomId() }];
+    
+    saveQuizes(newQuizzes);
+    setEditingQuiz(null);
+  };
 
   const handleDeleteQuiz = (quizIdToDelete: number) => {
-    setQuizes((prevState) => prevState.filter((quiz) => quiz.id !== quizIdToDelete));
+    const updatedQuizes = quizes.filter((quiz) => quiz.id !== quizIdToDelete);
+    setQuizes((prevState) => [...prevState, updatedQuizes]);
+    localStorage.setItem('quizes', JSON.stringify(updatedQuizes));
+  };
+
+  const handleQuizComplete = (quiz: any, result: any) => {
+    const newQuizResults = [...quizResults, { quiz, result }];
+    setQuizResults(newQuizResults);
+    setTakingQuiz(null);
   }
+
+  const handleAddQuiz = () => {
+    setEditingQuiz({});
+  };
+
+  const handleEditQuiz = (quiz: any) => {
+    setEditingQuiz(quiz);
+  };
 
   const handleTakeQuiz = (quiz: any) => {
     setTakingQuiz(quiz);
-  }
+  };
 
   return (
-    <>
+    <div className="min-h-screen h-full p-2.5 bg-custom-gradient">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
         <h1>Quiz List</h1>
-        <button>Add Quiz</button>
+        <button onClick={handleAddQuiz}>Add Quiz</button>
       </nav>
 
       <div>
-
         <ul className="divide-y divide-gray-100 px-4">
           {quizes.map((quiz) => (
             <li key={quiz.id} className="flex justify-between gap-x-6 py-5">
               <p className="text-xl	font-semibold text-gray-900 text-center">{quiz.title}</p>
+              {quizResults.map((quizResult) => {
+                  if (quizResult.quiz.id === quiz.id) {
+                    return (
+                      <div key={quizResult.quiz.id} className="flex w-1/4 justify-between">
+                        <p>Score: {quizResult.result.score} / {quizResult.result.totalPoints}</p>
+                        <p>Time Spent: {quizResult.result.timeSpent} seconds</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
               <div className="flex min-w-0 gap-x-4">
                 <button onClick={() => handleEditQuiz(quiz)}>Edit</button>
                 <button onClick={() => handleDeleteQuiz(quiz.id)}>Delete</button>
@@ -64,8 +84,20 @@ const QuizList: React.FC = () => {
             </li>
           ))}
         </ul>
+
+        {editingQuiz && (
+          <EditQuizForm
+            quiz={editingQuiz}
+            onSave={handleSaveQuiz}
+            onCancel={() => setEditingQuiz(null)}
+          />
+        )}
+
+        {takingQuiz && (
+          <TakeQuizModal quiz={takingQuiz} onComplete={(result) => handleQuizComplete(takingQuiz, result)}/>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
