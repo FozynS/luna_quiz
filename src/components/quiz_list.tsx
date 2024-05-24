@@ -31,7 +31,7 @@ const QuizList: React.FC = () => {
 
   const handleDeleteQuiz = (quizIdToDelete: number) => {
     const updatedQuizes = quizes.filter((quiz) => quiz.id !== quizIdToDelete);
-    setQuizes((prevState) => [...prevState, updatedQuizes]);
+    setQuizes(updatedQuizes);
     localStorage.setItem('quizes', JSON.stringify(updatedQuizes));
   };
 
